@@ -9,7 +9,7 @@ newtype Effect a =
   Effect (StateT (HashMap Text Text) IO a)
   deriving (Functor, Applicative, Monad)
 
-run :: Effect a -> IO a
+run :: Effect a -> IO (Either Text a)
 run (Effect impl) =
   undefined
 
