@@ -13,12 +13,12 @@ import qualified Data.CaseInsensitive as H
 import qualified Data.ByteString.Builder as I
 
 
-routeServer :: Monad m => Int -> (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> IO ()
-routeServer port runBase route =
-  E.run port (routeApplication runBase route)
+routerServer :: Monad m => Int -> (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> IO ()
+routerServer port runBase route =
+  E.run port (routerApplication runBase route)
 
-routeApplication :: Monad m => (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> D.Application
-routeApplication runBase route =
+routerApplication :: Monad m => (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> D.Application
+routerApplication runBase route =
   \request responseHandler ->
     runBase (C.route (routerRequest request) route) >>=
     responseHandler . waiResponse . either internalError id . join
