@@ -37,7 +37,7 @@ routerRequest waiRequest =
   F.Request method path query headers inputStream
   where
     method =
-      F.Method (D.requestMethod waiRequest)
+      F.Method (H.foldCase (D.requestMethod waiRequest))
     path =
       F.Path (D.rawPathInfo waiRequest)
     query =
@@ -46,7 +46,7 @@ routerRequest waiRequest =
       J.fromList (map row (D.requestHeaders waiRequest))
       where
         row (name, value) =
-          (F.HeaderName (H.foldedCase name), F.HeaderValue (H.foldCase value))
+          (F.HeaderName (H.foldedCase name), F.HeaderValue value)
     inputStream =
       F.InputStream (D.requestBody waiRequest)
 
