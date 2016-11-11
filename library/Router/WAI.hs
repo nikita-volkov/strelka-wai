@@ -7,6 +7,7 @@ where
 
 import BasePrelude
 import Data.Text (Text)
+import System.IO (stderr)
 import qualified Router.RequestParser as A
 import qualified Router.ResponseBuilder as B
 import qualified Router.Executor as C
@@ -17,6 +18,7 @@ import qualified Network.HTTP.Types as G
 import qualified Data.CaseInsensitive as H
 import qualified Data.ByteString.Builder as I
 import qualified Data.HashMap.Strict as J
+import qualified Data.Text.IO as K
 
 
 routerServer :: Monad m => Int -> (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> IO ()
@@ -26,11 +28,15 @@ routerServer port runBase route =
 routerApplication :: Monad m => (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> D.Application
 routerApplication runBase route =
   \request responseHandler ->
-    runBase (C.route (routerRequest request) route) >>=
-    responseHandler . waiResponse . either internalError id . join
-  where
-    internalError message =
-      B.run B.internalErrorStatus
+    do
+      responseEither <- fmap join (runBase (C.route (routerRequest request) route))
+      case responseEither of
+        Left msg ->
+          do
+            K.hPutStrLn stderr msg
+            responseHandler (waiResponse (B.run B.internalErrorStatus))
+        Right response ->
+          responseHandler (waiResponse response)
 
 routerRequest :: D.Request -> F.Request
 routerRequest waiRequest =
