@@ -1,7 +1,7 @@
 name:
   router-wai
 version:
-  0.1
+  0.2
 synopsis:
   WAI compatibility layer for "router"
 homepage:
