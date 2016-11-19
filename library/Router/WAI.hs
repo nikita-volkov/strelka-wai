@@ -6,11 +6,12 @@ module Router.WAI
 where
 
 import BasePrelude
+import Control.Monad.IO.Class
 import Data.Text (Text)
 import System.IO (stderr)
-import qualified Router.RequestParser as A
+import qualified Router.RequestHeadParser as A
 import qualified Router.ResponseBuilder as B
-import qualified Router.Executor as C
+import qualified Router.Route as C
 import qualified Router.Model as F
 import qualified Network.Wai as D
 import qualified Network.Wai.Handler.Warp as E
@@ -21,15 +22,15 @@ import qualified Data.HashMap.Strict as J
 import qualified Data.Text.IO as K
 
 
-routerServer :: Monad m => Int -> (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> IO ()
+routerServer :: MonadIO m => Int -> (forall a. m a -> IO (Either Text a)) -> C.Route m -> IO ()
 routerServer port runBase route =
   E.run port (routerApplication runBase route)
 
-routerApplication :: Monad m => (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> D.Application
+routerApplication :: MonadIO m => (forall a. m a -> IO (Either Text a)) -> C.Route m -> D.Application
 routerApplication runBase route =
   \request responseHandler ->
     do
-      responseEither <- fmap join (runBase (C.route (routerRequest request) route))
+      responseEither <- fmap join (runBase (C.run route (routerRequest request)))
       case responseEither of
         Left msg ->
           do

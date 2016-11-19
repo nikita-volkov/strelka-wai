@@ -46,11 +46,12 @@ library
     wai >= 3.2 && < 4,
     warp >= 3.2 && < 4,
     http-types >= 0.9 && < 0.10,
-    router == 0.1.*,
+    router == 0.2.*,
     -- 
     unordered-containers == 0.2.*,
     case-insensitive >= 1 && < 2,
     text == 1.*,
     bytestring == 0.10.*,
+    transformers >= 0.3 && < 0.6,
     base-prelude < 2,
     base < 5
