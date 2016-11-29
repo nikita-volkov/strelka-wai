@@ -1,13 +1,13 @@
 name:
-  router-wai
+  strelka-wai
 version:
-  0.3
+  0.4
 synopsis:
-  WAI compatibility layer for "router"
+  WAI compatibility layer for "strelka"
 homepage:
-  https://github.com/nikita-volkov/router-wai
+  https://github.com/nikita-volkov/strelka-wai
 bug-reports:
-  https://github.com/nikita-volkov/router-wai/issues 
+  https://github.com/nikita-volkov/strelka-wai/issues 
 author:
   Nikita Volkov <nikita.y.volkov@mail.ru>
 maintainer:
@@ -28,15 +28,14 @@ source-repository head
   type:
     git
   location:
-    git://github.com/nikita-volkov/router-wai.git
+    git://github.com/nikita-volkov/strelka-wai.git
 
 
 library
   hs-source-dirs:
     library
-  other-modules:
   exposed-modules:
-    Router.WAI
+    Strelka.WAI
   default-extensions:
     Arrows, BangPatterns, ConstraintKinds, DataKinds, DefaultSignatures, DeriveDataTypeable, DeriveFoldable, DeriveFunctor, DeriveGeneric, DeriveTraversable, EmptyDataDecls, FlexibleContexts, FlexibleInstances, FunctionalDependencies, GADTs, GeneralizedNewtypeDeriving, LambdaCase, LiberalTypeSynonyms, MagicHash, MultiParamTypeClasses, MultiWayIf, NoImplicitPrelude, NoMonomorphismRestriction, OverloadedStrings, PatternGuards, ParallelListComp, QuasiQuotes, RankNTypes, RecordWildCards, ScopedTypeVariables, StandaloneDeriving, TemplateHaskell, TupleSections, TypeFamilies, TypeOperators, UnboxedTuples
   default-language:
@@ -46,7 +45,7 @@ library
     wai >= 3.2 && < 4,
     warp >= 3.2 && < 4,
     http-types >= 0.9 && < 0.10,
-    router == 0.3.*,
+    strelka == 0.4.*,
     -- 
     unordered-containers == 0.2.*,
     case-insensitive >= 1 && < 2,

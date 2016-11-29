@@ -1,17 +1,17 @@
-module Router.WAI
+module Strelka.WAI
 (
-  routerServer,
-  routerApplication,
+  strelkaServer,
+  strelkaApplication,
 )
 where
 
 import BasePrelude
 import Data.Text (Text)
 import System.IO (stderr)
-import qualified Router.RequestParser as A
-import qualified Router.ResponseBuilder as B
-import qualified Router.Executor as C
-import qualified Router.Model as F
+import qualified Strelka.RequestParser as A
+import qualified Strelka.ResponseBuilder as B
+import qualified Strelka.Executor as C
+import qualified Strelka.Model as F
 import qualified Network.Wai as D
 import qualified Network.Wai.Handler.Warp as E
 import qualified Network.HTTP.Types as G
@@ -21,15 +21,15 @@ import qualified Data.HashMap.Strict as J
 import qualified Data.Text.IO as K
 
 
-routerServer :: Monad m => Int -> (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> IO ()
-routerServer port runBase route =
-  E.run port (routerApplication runBase route)
+strelkaServer :: Monad m => Int -> (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> IO ()
+strelkaServer port runBase route =
+  E.run port (strelkaApplication runBase route)
 
-routerApplication :: Monad m => (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> D.Application
-routerApplication runBase route =
+strelkaApplication :: Monad m => (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> D.Application
+strelkaApplication runBase route =
   \request responseHandler ->
     do
-      responseEither <- fmap join (runBase (C.route (routerRequest request) route))
+      responseEither <- fmap join (runBase (C.route (strelkaRequest request) route))
       case responseEither of
         Left msg ->
           do
@@ -38,8 +38,8 @@ routerApplication runBase route =
         Right response ->
           responseHandler (waiResponse response)
 
-routerRequest :: D.Request -> F.Request
-routerRequest waiRequest =
+strelkaRequest :: D.Request -> F.Request
+strelkaRequest waiRequest =
   F.Request method path query headers inputStream
   where
     method =
