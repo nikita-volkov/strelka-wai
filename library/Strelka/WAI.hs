@@ -47,7 +47,10 @@ strelkaRequest waiRequest =
     path =
       F.Path (D.rawPathInfo waiRequest)
     query =
-      F.Query (D.rawQueryString waiRequest)
+      J.fromList (map row (D.queryString waiRequest))
+      where
+        row (name, value) =
+          (F.ParamName name, F.ParamValue value)
     headers =
       J.fromList (map row (D.requestHeaders waiRequest))
       where
