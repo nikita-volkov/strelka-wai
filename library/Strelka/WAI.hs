@@ -21,10 +21,14 @@ import qualified Data.HashMap.Strict as J
 import qualified Data.Text.IO as K
 
 
+-- |
+-- Given a port number, a base monad executor and a route specification, starts the Warp server.
 strelkaServer :: Monad m => Int -> (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> IO ()
 strelkaServer port runBase route =
   E.run port (strelkaApplication runBase route)
 
+-- |
+-- Given a base monad executor and a route specification, produces a WAI application.
 strelkaApplication :: Monad m => (forall a. m a -> IO (Either Text a)) -> A.RequestParser m B.ResponseBuilder -> D.Application
 strelkaApplication runBase route =
   \request responseHandler ->
