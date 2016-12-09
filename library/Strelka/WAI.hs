@@ -8,10 +8,10 @@ where
 import BasePrelude
 import Data.Text (Text)
 import System.IO (stderr)
-import qualified Strelka.RequestParser as A
-import qualified Strelka.ResponseBuilder as B
-import qualified Strelka.Executor as C
-import qualified Strelka.Model as F
+import qualified Strelka.Core.RequestParser as A
+import qualified Strelka.Core.ResponseBuilder as B
+import qualified Strelka.Core.Executor as C
+import qualified Strelka.Core.Model as F
 import qualified Network.Wai as D
 import qualified Network.Wai.Handler.Warp as E
 import qualified Network.HTTP.Types as G
@@ -34,9 +34,12 @@ strelkaApplication runBase route =
         Left msg ->
           do
             K.hPutStrLn stderr msg
-            responseHandler (waiResponse (B.run B.internalErrorStatus))
+            responseHandler (waiResponse internalErrorResponse)
         Right response ->
           responseHandler (waiResponse response)
+  where
+    internalErrorResponse =
+      F.Response (F.Status 500) [] (F.OutputStream (const (const (pure ()))))
 
 strelkaRequest :: D.Request -> F.Request
 strelkaRequest waiRequest =
@@ -45,7 +48,7 @@ strelkaRequest waiRequest =
     method =
       F.Method (H.foldCase (D.requestMethod waiRequest))
     path =
-      F.Path (D.rawPathInfo waiRequest)
+      fmap F.PathSegment (D.pathInfo waiRequest)
     query =
       J.fromList (map row (D.queryString waiRequest))
       where
