@@ -17,6 +17,7 @@ import qualified Network.Wai.Handler.Warp as E
 import qualified Network.HTTP.Types as G
 import qualified Data.CaseInsensitive as H
 import qualified Data.ByteString.Builder as I
+import qualified Data.ByteString as L
 import qualified Data.HashMap.Strict as J
 import qualified Data.Text.IO as K
 
@@ -54,10 +55,7 @@ strelkaRequest waiRequest =
     path =
       fmap F.PathSegment (D.pathInfo waiRequest)
     query =
-      J.fromList (map row (D.queryString waiRequest))
-      where
-        row (name, value) =
-          (F.ParamName name, F.ParamValue value)
+      F.Query . maybe "" snd . L.uncons . D.rawQueryString $ waiRequest
     headers =
       J.fromList (map row (D.requestHeaders waiRequest))
       where
